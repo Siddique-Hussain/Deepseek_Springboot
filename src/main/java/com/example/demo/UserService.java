@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,21 +18,33 @@ public class UserService {
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
     public User createUser(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new ValidationException("Email already exists");
+        }
         return userRepository.save(user);
     }
 
     public User updateUser(Long id, User userDetails) {
-        User user = getUserById(id);
-        user.setName(userDetails.getName());
-        user.setEmail(userDetails.getEmail());
-        return userRepository.save(user);
-    }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
-    }
+        if (!user.getEmail().equals(userDetails.getEmail()) &&
+                userRepository.existsByEmail(userDetails.getEmail())) {
+            throw new ValidationException("Email already exists");
+        }
+            user.setName(userDetails.getName());
+            user.setEmail(userDetails.getEmail());
+            return userRepository.save(user);
+        }
+
+
+        public void deleteUser(Long id) {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+            userRepository.delete(user);
+        }
 }
