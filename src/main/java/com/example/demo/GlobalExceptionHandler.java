@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
                     FieldError fieldError = (FieldError) error;
                     return new ErrorDetails(
                             fieldError.getField(),
-                            fieldError.getDefaultMessage(),
+                            error.getDefaultMessage(),
                             fieldError.getRejectedValue()
                     );
                 })
