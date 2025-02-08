@@ -2,6 +2,7 @@ package com.example.demo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -21,7 +22,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF (enable in production)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/**").hasRole("SIDDIQUE") // Only ADMIN can access /api/users
+                        .requestMatchers(HttpMethod.GET,"/api/users/**").hasRole("SIDDIQUE") // Only ADMIN can access /api/users
                         .anyRequest().permitAll() // Allow all other requests
                 )
                 .httpBasic(httpBasic -> {}); // Enable HTTP Basic Authentication
