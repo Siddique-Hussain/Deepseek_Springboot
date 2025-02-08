@@ -22,7 +22,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF (enable in production)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET,"/api/users/**").hasRole("SIDDIQUE") // Only ADMIN can access /api/users
+                        .requestMatchers(HttpMethod.GET, "/api/users/**").hasRole("USER") // Only USER role can access GET /api/users/**
+                        .requestMatchers(HttpMethod.POST, "/api/users/**").hasRole("ADMIN") // Only ADMIN role can access POST /api/users/**
+
+                        // Role-based access for /api/admin/**
+                        .requestMatchers("/apii/admin/**").hasRole("SIDDIQUE") // Only ADMIN can access /api/admin
                         .anyRequest().permitAll() // Allow all other requests
                 )
                 .httpBasic(httpBasic -> {}); // Enable HTTP Basic Authentication
